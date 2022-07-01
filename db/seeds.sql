@@ -1,34 +1,28 @@
--- seeding the departments
 INSERT INTO department (name)
 VALUES ('Legal'),
     ('Sales'),
-    ('Engineering');
+    ('Engineering'),
+    ('Finance');
 
--- seeding the roles
 INSERT INTO roles (title, salary, department_id)
 VALUES ('Legal Team Lead', 250000, 1),
-    ('Lawyer', 170000, 1),
+    ('Lawyer', 190000, 1),
     ('Sales Lead', 100000, 2),
-    ('Salesperson', 70000, 2),
+    ('Salesperson', 80000, 2),
     ('Lead Engineer', 150000, 3),
-    ('Engineer', 120000, 3);
+    ('Software Engineer', 120000, 3);
+    ('Accountant Manager', 160000, 4),
+    ('Accountant', 120000, 4),
 
--- seeding the employees
-INSERT INTO employee (first_name, last_name, role_id, manager_id, manager_confirm)
-VALUES ('Jerry', 'Underwood', 1, null, true),
-    ('Bob', 'Sheldon', 2, 1, false),
-    ('Jason', 'Mendoza', 2, 1, false),
-    ('Alex', 'Jackson', 3, null, true),
-    ('Peter', 'Makah', 4, 2, false),
-    ('Suzie', 'Alisson', 4, 2, false),
-    ('John', 'Winger', 4, 2, false),
-    ('Pete', 'McFall', 5, null, true),
-    ('Alexis', 'Caper', 6, 3, false),
-    ('Mason', 'Jacobson', 6, 3, false);
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ('David', 'Jackson', 1, null),
+    ('Thomas', 'Lee', 2, 1),
+    ('John', 'Perez', 2, 1),
+    ('Gary', 'White', 3, null),
+    ('Carl', 'Clark', 4, 2),
+    ('Terry', 'Lewis', 4, 2),
+    ('Billy', 'King', 4, 2),
+    ('louis', 'Scott', 5, null),
+    ('Jesse', 'Torres', 6, 3),
+    ('Tony', 'Walker', 6, 3);
 
--- seeding the manager
-INSERT INTO manager (first_name, last_name)
-SELECT first_name,
-    last_name
-FROM employee
-WHERE manager_confirm = 1;

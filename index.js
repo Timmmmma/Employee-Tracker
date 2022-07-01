@@ -6,35 +6,37 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Connect to database
 const connection = mysql.createConnection(
     {
         host: "localhost",
 
-        // Your username
+        // Enter your username here
         user: 'root',
-        // Your password
+        // Enter your password here
         password: 'root',
-        database: 'employees'
+        database: 'employees_db'
     },
-    console.log("Connected to the database.")
+    console.log("Connected to the database."),
   );
   
 
-// express middleware
+// Express middleware
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
-// Default response for any other request (Not found)
+// Default response
 app.use((req, res) => {
   res.status(404).end();
 });
 
-// Start server after DB connection
+
 connection.connect(err => {
   if (err) throw err;
   console.log('Welcome!');
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    //Turn to the menu
     mainPage();
   });
 });
@@ -92,56 +94,14 @@ const mainPage = () => {
                     addRole();
                     break;
                 case 'I am finished':
+                    connection.end();
                     console.log("\nGoodbye!");
                     process.exit(0);
             }
         })
 };
 
-
-//department
-const viewDep = () => {
-    connection.query(
-        `SELECT * FROM department`,
-        function (err, results, fields) {
-            if (err) {
-                console.log(err.message);
-                return;
-            }
-
-            console.table(results);
-            mainPage();
-        }
-    )
-} 
-
-// adding department 
-const addDep = () => {
-    inquirer
-        .prompt({
-            type: 'text',
-            name: 'dep_name',
-            message: 'Please enter the name of the department you would like to add: '
-        })
-        .then((data) => {
-            connection.query(
-                `INSERT INTO department (name)
-                VALUES(?)`,
-                [data.dep_name],
-                function (err, results, fields) {
-                    if (err) {
-                        console.log(err.message);
-                        return;
-                    }
-
-                    console.log('Added department!');
-                    mainPage();
-                }
-            )
-        })
-}
-
-//employee
+//-------------------------------Employee---------------------------------
 const viewAllEmp = () => {
 
     // connect to db and asking the following query
@@ -338,27 +298,7 @@ const addEmp = () => {
                                 message: 'What will you employees role be?',
                                 // use the names from the roles array to get the roles, this will allow us to add new roles in the future
                                 choices: roleArr
-                            },
-                            {
-                                type: 'confirm',
-                                name: 'mngt_confirm',
-                                message: 'Is your employees role a manager position?'
-                            },
-                            {
-                                type: 'list',
-                                name: 'mngt_pick',
-                                message: 'Who will your employees manager be?',
-                                // If the user confirms the emp is a manager, then do not run this prompt
-                                when: ({ mngt_confirm }) => {
-                                    if (!mngt_confirm) {
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                },
-                                // Choices will be the names from the manager array
-                                choices: manArr
-                            }
+                            },                       
                         ])
                         .then((data) => {
                             // Create a loop of the role arr in order to compare the users answer to the position it is in in the array,
@@ -403,12 +343,6 @@ const addEmp = () => {
                                         console.log(err.message);
                                         return;
                                     }
-                                    // Drop the manager table in order to re-update manager table
-                                    dropManager();
-                                    // Re-Create the manager table
-                                    createManagerTable();
-                                    // Add new and current managers to table
-                                    addManagers();
                                     console.log('Employee succesfully added!');
                                     // Reset to main screen
                                     mainPage();
@@ -504,53 +438,50 @@ const upEmp = () => {
         }
     );
 };
-//reset
-const dropManager = () => {
+
+//----------------------------Department---------------------------------
+const viewDep = () => {
     connection.query(
-        `DROP TABLE IF EXISTS manager`,
+        `SELECT * FROM department`,
         function (err, results, fields) {
             if (err) {
                 console.log(err.message);
+                return;
             }
-            console.log('')
+
+            console.table(results);
+            mainPage();
         }
     )
-};
+} 
 
-const createManagerTable = () => {
-    connection.query(
-        `CREATE TABLE manager (
-            id INT NOT NULL AUTO_INCREMENT,
-            first_name VARCHAR(30),
-            last_name VARCHAR(30),
-            PRIMARY KEY (id)
-        )`,
-        function (err, results, fields) {
-            if (err) {
-                console.log(err.message);
-            }
-            console.log('')
-        }
-    )
-};
+// adding department 
+const addDep = () => {
+    inquirer
+        .prompt({
+            type: 'text',
+            name: 'dep_name',
+            message: 'Please enter the name of the department you would like to add: '
+        })
+        .then((data) => {
+            connection.query(
+                `INSERT INTO department (name)
+                VALUES(?)`,
+                [data.dep_name],
+                function (err, results, fields) {
+                    if (err) {
+                        console.log(err.message);
+                        return;
+                    }
 
-const addManagers = () => {
-    connection.query(
-        `INSERT INTO manager (first_name, last_name)
-        SELECT first_name,
-            last_name
-        FROM employee
-        WHERE manager_confirm = 1`,
-        function (err, results, fields) {
-            if (err) {
-                console.log(err.message);
-            }
-            console.log('')
-        }
-    )
-};
+                    console.log('Added department!');
+                    mainPage();
+                }
+            )
+        })
+}
 
-//role
+//-------------------------------Role-----------------------------------------
 const viewRoles = () => {
     connection.query(
         `SELECT roles.id, roles.title, roles.salary, department.name
@@ -630,6 +561,10 @@ const addRole = () => {
         }
     );
 };
+
+
+
+
 
 
 

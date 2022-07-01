@@ -1,46 +1,43 @@
--- creating employee database
-DROP DATABASE IF EXISTS employees;
-CREATE DATABASE employees;
+DROP DATABASE IF EXISTS employees_db;
+CREATE DATABASE employees_db;
 
--- using the database
-USE employees;
+USE employees_db;
 
--- droping the tables if exist
 DROP TABLE IF EXISTS manager;
 DROP TABLE IF EXISTS department;
 DROP TABLE IF EXISTS roles;
 DROP TABLE IF EXISTS employee;
 
--- creating the manager table
+--manager
 CREATE TABLE manager (
     id INT NOT NULL AUTO_INCREMENT,
-    first_name VARCHAR(30),
-    last_name VARCHAR(30),
+    first_name VARCHAR(30) NULL,
+    last_name VARCHAR(30) NULL,
     PRIMARY KEY (id)
 );
 
--- creating the department table
+--department
 CREATE TABLE department (
     id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(30),
+    name VARCHAR(30) NULL,
     PRIMARY KEY (id)
 );
 
--- creating the table for roles
+--role
 CREATE TABLE roles (
     id INT NOT NULL AUTO_INCREMENT,
-    title VARCHAR(30),
+    title VARCHAR(30) NULL,
     salary DECIMAL,
     department_id INT,
     PRIMARY KEY (id),
     FOREIGN KEY (department_id) REFERENCES department(id)
 );
 
--- creating the employee table
+--employee
 CREATE TABLE employee (
     id INT NOT NULL AUTO_INCREMENT,
-    first_name VARCHAR(30),
-    last_name VARCHAR(30),
+    first_name VARCHAR(30) NULL,
+    last_name VARCHAR(30) NULL,
     role_id INT,
     manager_id INT,
     manager_confirm BOOLEAN,
