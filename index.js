@@ -71,7 +71,7 @@ const mainPage = () => {
                     viewEmployeeByDepartment();
                     break;
                 case 'View All Employees By Manager':
-                    viewEmployeeByManagment();
+                    viewEmployeeByManager();
                     break;
                 case 'Add Employee':
                     addEmployee();
@@ -147,7 +147,7 @@ const viewEmployeeByDepartment = () => {
                 .prompt({
                     type: 'list',
                     name: 'filter-emp-dep',
-                    message: 'Choose a department from below:',
+                    message: 'What is the name of the department:',
                     choices: departmentArray
                 })
                 .then((data) => {
@@ -175,8 +175,8 @@ const viewEmployeeByDepartment = () => {
     );
 };
 
-//"View Employees by Department" / READ by, SELECT * FROM
-const viewEmployeeByManagment = () => {
+//"View Employees by manager" / READ by, SELECT * FROM
+const viewEmployeeByManager = () => {
     connection.query(
         `SELECT * FROM manager`,
         function (err, results, fields) {
@@ -194,7 +194,7 @@ const viewEmployeeByManagment = () => {
                 .prompt({
                     type: 'list',
                     name: 'filter-emp-man',
-                    message: 'Choose a manager to filter from:',
+                    message: 'What is the name for the manager',
                     choices: managerArray
                 })
                 .then((data) => {
@@ -256,23 +256,23 @@ const addEmployee = () => {
                             {
                                 type: 'text',
                                 name: 'first_name',
-                                message: 'What is you employees first name?'
+                                message: "What is the employee's first name?",
                             },
                             {
                                 type: 'text',
                                 name: 'last_name',
-                                message: 'What is your employees last name?'
+                                message: "What is the employee's last name?",
                             },
                             {
                                 type: 'list',
                                 name: 'role_pick',
-                                message: 'What will you employees role be?',
+                                message: "What is the employee's role?",
                                 choices: roleArray
                             },
                             {
                                 type: 'list',
                                 name: 'mngt_pick',
-                                message: 'Who will your employees manager be?',
+                                message: "Who is the employee's manager?",
                                 choices: managerArray
                             }                       
                         ])
@@ -293,9 +293,8 @@ const addEmployee = () => {
                                     }
                                 }
                             }
-                            // Connect to db again
+                            //Insert a new employee's first name and last name from users input, role and manager id are from database preset
                             connection.query(
-                                // Insert values from user into db, uses place holders to prevent SQL Injection attack
                                 `INSERT INTO employee (first_name, last_name, role_id, manager_id)
                                     VALUES (?, ?, ?, ?)`,
                                 [data.first_name, data.last_name, role_id, manager_id],
@@ -305,7 +304,7 @@ const addEmployee = () => {
                                         return;
                                     }
                                     console.log('Employee succesfully added!');
-                                    // Reset to main screen
+                                    //Return to main page
                                     mainPage();
                                 }
                             );
@@ -316,9 +315,8 @@ const addEmployee = () => {
     );
 };
 
-//Select a employee then update his role
+//Select an employee and update his role
 const updateEmployee = () => {
-    // Select all roles from table for future ref
     connection.query(
         `SELECT * FROM roles`,
         function (err, results, fields) {
@@ -327,10 +325,8 @@ const updateEmployee = () => {
                 return;
             }
 
-            // Create empty array for storing info
+            //Same sa above
             let roleArray = [];
-
-            // for each item in the results array, push the name of the roles to the roles array
             results.forEach(item => {
                 roleArray.push(item.title)
             })
@@ -341,16 +337,17 @@ const updateEmployee = () => {
                         console.log(err.message);
                     }
 
-                    let nameArr = [];
+                    //Select from array so it will not miss any newly added employee
+                    let employeeArray = [];
                     results.forEach(item => {
-                        nameArr.push(item.first_name);
-                        nameArr.push(item.last_name);
+                        employeeArray.push(item.first_name);
+                        employeeArray.push(item.last_name);
                     })
-                    let combinedNameArr = [];
-                    for (let i = 0; i < nameArr.length; i += 2) {
-                        if (!nameArr[i + 1])
+                    let combinedemployeeArray = [];
+                    for (let i = 0; i < employeeArray.length; i += 2) {
+                        if (!employeeArray[i + 1])
                             break
-                        combinedNameArr.push(`${nameArr[i]} ${nameArr[i + 1]}`)
+                        combinedemployeeArray.push(`${employeeArray[i]} ${employeeArray[i + 1]}`)
                     }
                     inquirer
                         .prompt([
@@ -358,7 +355,7 @@ const updateEmployee = () => {
                                 type: 'list',
                                 name: 'name_select',
                                 message: 'Please select an employee you would like to update',
-                                choices: combinedNameArr
+                                choices: combinedemployeeArray
                             },
                             {
                                 type: 'list',
@@ -374,10 +371,11 @@ const updateEmployee = () => {
                                     role_id = i + 1;
                                 }
                             };
-                            let selectedNameArr = data.name_select.split(" ");
-                            let last_name = selectedNameArr.pop();
-                            let first_name = selectedNameArr[0];
+                            let selectedemployeeArray = data.name_select.split(" ");
+                            let last_name = selectedemployeeArray.pop();
+                            let first_name = selectedemployeeArray[0];
 
+                            //Update the role in database according to the same first name and last name
                             connection.query(
                                 `UPDATE employee 
                                         SET role_id = ?
@@ -410,7 +408,6 @@ const viewDepartment = () => {
                 console.log(err.message);
                 return;
             }
-
             console.table(results);
             mainPage();
         }
@@ -506,6 +503,7 @@ const addRole = () => {
                         };
                     };
 
+                    //Insert a new role in database
                     connection.query(
                         `INSERT INTO roles (title, salary, department_id)
                             VALUES(?,?,?)`,
