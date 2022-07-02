@@ -13,8 +13,17 @@
   ## Installation 
   Download or use `git clone` from the <a href="https://github.com/Timmmmma/Employee-Tracker.git">Link</a>, then open in terminal and run `npm install`.
   ## Usage 
+  First of all, please connect to the MySQL and create database.
+  
+  Run `mysql -u USERNAME -p` and input your password,
+  
+  Run `SOURCE db/schema.sql` and `SOURCE db/seeds.sql`,
+  
   Run `npm start` in termianl then you will see a menu
+  
   <a href="https://drive.google.com/file/d/1LCcbjl0V3Dt6pFeDAYEwbbpdDthXPzvZ/view?usp=sharing">Screencastify</a>
+  
+  If there is any error, please check the .json file and fix it by run `npm i`, `npm i inquirer`, `npm i mysql2`, `npm i console.table`
   ## License 
   ISC
   ## Tests
