@@ -303,7 +303,7 @@ const addEmployee = () => {
                                         console.log(err.message);
                                         return;
                                     }
-                                    console.log('Employee succesfully added!');
+                                    console.log('Employee added!');
                                     //Return to main page
                                     mainPage();
                                 }
@@ -343,24 +343,24 @@ const updateEmployee = () => {
                         employeeArray.push(item.first_name);
                         employeeArray.push(item.last_name);
                     })
-                    let combinedemployeeArray = [];
+                    let combineEmployeeArray = [];
                     for (let i = 0; i < employeeArray.length; i += 2) {
                         if (!employeeArray[i + 1])
                             break
-                        combinedemployeeArray.push(`${employeeArray[i]} ${employeeArray[i + 1]}`)
+                        combineEmployeeArray.push(`${employeeArray[i]} ${employeeArray[i + 1]}`)
                     }
                     inquirer
                         .prompt([
                             {
                                 type: 'list',
                                 name: 'name_select',
-                                message: 'Please select an employee you would like to update',
-                                choices: combinedemployeeArray
+                                message: "Which employee's role do you want to update",
+                                choices: combineEmployeeArray
                             },
                             {
                                 type: 'list',
                                 name: 'role_select',
-                                message: 'Please select a role you would like your employee to change to:',
+                                message: "What is this employee's role you want to update",
                                 choices: roleArray
                             }
                         ])
@@ -420,7 +420,7 @@ const addDepartment = () => {
         .prompt({
             type: 'text',
             name: 'dep_name',
-            message: 'Please enter the name of the department you would like to add: '
+            message: "What is the new department's name"
         })
         .then((data) => {
             connection.query(
@@ -480,17 +480,17 @@ const addRole = () => {
                     {
                         type: 'text',
                         name: 'role_title',
-                        message: 'Please enter the name of the role you would like to add: '
+                        message: 'What is the name of the new role'
                     },
                     {
                         type: 'number',
                         name: 'salary',
-                        message: 'Please enter the salary of this role. Note: Please do not use commas or periods'
+                        message: 'How much the salary of this role'
                     },
                     {
                         type: 'list',
                         name: 'department',
-                        message: 'Please select the department you role will be a part of: ',
+                        message: 'Which department for this role insert to',
                         choices: departmentArray
                     }
                 ])
